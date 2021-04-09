@@ -52,3 +52,21 @@ docker exec -it e84fcfaa2a0a composer require aws/aws-sdk-php-symfony
   docker tag private-bitnami-php-symphony ${REPO_URI}
   docker push ${REPO_URI}
   ```
+
+## Set up ECS cluster
+
+The included `cloudformation/fargate.yaml` CFN template originated from [1Strategy](https://github.com/1Strategy/fargate-cloudformation-example/blob/master/fargate.yaml). 
+
+Make sure you have a domain name, and a hosted zone for it in route53 in the same account. Also make sure you have and ACM certificate that covers the subdomain under which you want to run the service.
+
+Populate a file named `parmeters.json` with relevant information then create a cloudforamtion stack:
+
+```bash
+cd cloudformation
+aws cloudformation create-stack \
+  --stack-name ecs-php-symfony \
+  --template-body file://fargate.yaml \
+  --parameters file://parameters.json \
+  --capabilities CAPABILITY_NAMED_IAM
+```
+
