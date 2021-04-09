@@ -14,32 +14,20 @@ class s3test
       */
     public function number(): Response
     {
-        // // The same options that can be provided to a specific client constructor can also be supplied to the Aws\Sdk class.
-        // // Use the us-west-2 region and latest version of each client.
-        // $sharedConfig = [
-        //     'region' => 'us-west-2',
-        //     'version' => 'latest'
-        // ];
-
-        // // Create an SDK class used to share configuration across clients.
-        // $sdk = new \Aws\Sdk($sharedConfig);
-
-        // // Create an Amazon S3 client using the shared configuration data.
-        // $s3client = $sdk->createS3();
-
-        //Create a S3Client
+        // Create a S3Client using global path to escape symfony namespace
         $s3client = new \Aws\S3\S3Client([
             'version' => 'latest',
             'region' => 'us-west-2'
         ]);
 
         $buckets = $s3client->listBuckets([]);
-        // $objects = [];
-        $objects = $s3client->listObjects(['Bucket' => "rudpot-sam-templates"]);
-        
+        $bucketstring = '';
+        foreach ($buckets['Buckets'] as $bucket) {
+            $bucketstring .= $bucket['Name'] . "<br />\n";
+        }
 
         return new Response(
-            '<html><body>We did not blow up<br />'.json_encode($buckets['Buckets']).'<br />'.json_encode($objects['Contents']).'</body></html>'
+            '<html><body><h1>Buckets in your account</h1><br />'.$bucketstring.'<br /></body></html>'
         );
     }
 }

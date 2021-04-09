@@ -1,4 +1,4 @@
-# private-php-symfony-ecs
+# PHP Symfony ECS example
 
 Test php symfony deploy on ECS.
 
@@ -59,7 +59,63 @@ The included `cloudformation/fargate.yaml` CFN template originated from [1Strate
 
 Make sure you have a domain name, and a hosted zone for it in route53 in the same account. Also make sure you have and ACM certificate that covers the subdomain under which you want to run the service.
 
-Populate a file named `parmeters.json` with relevant information then create a cloudforamtion stack:
+Populate a file named `parmeters.json` with relevant information based on the `Parameters section` of the `fargate.yaml` file. It should looks something like this:
+
+```json
+[
+    {
+        "ParameterKey": "VPC",
+        "ParameterValue": "vpc-..."
+    },
+    {
+        "ParameterKey": "LbSubnetA",
+        "ParameterValue": "subnet-..."
+    },
+    {
+        "ParameterKey": "LbSubnetB",
+        "ParameterValue": "subnet-..."
+    },
+    {
+        "ParameterKey": "TaskSubnetA",
+        "ParameterValue": "subnet-..."
+    },
+    {
+        "ParameterKey": "TaskSubnetB",
+        "ParameterValue": "subnet-..."
+    },
+    {
+        "ParameterKey": "Certificate",
+        "ParameterValue": "arn:aws:acm:us-west-2:111122223333:certificate/00000000-0000-0000-0000-000000000000"
+    },
+    {
+        "ParameterKey": "Image",
+        "ParameterValue": "111122223333.dkr.ecr.us-west-2.amazonaws.com/ecs-test-repo"
+    },
+    {
+        "ParameterKey": "ServiceName",
+        "ParameterValue": "php-symfony"
+    },
+    {
+        "ParameterKey": "ContainerPort",
+        "ParameterValue": "8000"
+    },
+    {
+        "ParameterKey": "HealthCheckPath",
+        "ParameterValue": "/lucky/number"
+    },
+    {
+        "ParameterKey": "HostedZoneName",
+        "ParameterValue": "my.domain"
+    },
+    {
+        "ParameterKey": "Subdomain",
+        "ParameterValue": "ecs-php-symphony"
+    }
+]
+```
+
+
+then create a cloudforamtion stack:
 
 ```bash
 cd cloudformation
