@@ -68,5 +68,21 @@ aws cloudformation create-stack \
   --template-body file://fargate.yaml \
   --parameters file://parameters.json \
   --capabilities CAPABILITY_NAMED_IAM
+aws cloudformation wait stack-create-complete \
+  --stack-name ecs-php-symfony
 ```
 
+Check the Cloudformation console for the stack output to get the service URL. Then check the `/lucky/number` endpoint to validate the service is working and the `/aws/s3test` endpoint to validate that you can control access to AWS resources via the "TaskRole" IAM policies.
+
+## Cleanup
+
+* Delete the fargate ECS stack
+  ```bash
+  aws cloudformation delete-stack \
+    --stack-name ecs-php-symfony
+  aws cloudformation wait stack-delete-complete \
+    --stack-name ecs-php-symfony
+  ```
+
+* optionally delete the ACM certificate - via the console because that's the way it was created
+* optionally delete the ECR repository - via the console because image deletion is easier that way

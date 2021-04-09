@@ -5,10 +5,10 @@ Parameters:
     Type: AWS::EC2::VPC::Id
   TaskSubnetA:
     Type: AWS::EC2::Subnet::Id
-    Description: 'Subnet for container endpoints. This can be a public or private subnet'
+    Description: 'Subnet for container endpoints. This can be a public or private subnet. If using public subnets make this the same as LbSubnetA'
   TaskSubnetB:
     Type: AWS::EC2::Subnet::Id
-    Description: 'Subnet for container endpoints. This can be a public or private subnet'
+    Description: 'Subnet for container endpoints. This can be a public or private subnet If using public subnets make this the same as LbSubnetB'
   LbSubnetA:
     Type: AWS::EC2::Subnet::Id
     Description: 'Subnet for load balancer endpoints. This must be a public subnet and it must be able to route to the task subnet'
@@ -54,6 +54,11 @@ Parameters:
   AutoScalingTargetValue:
     Type: Number
     Default: 50
+Conditions:
+  ContainerPublicIps:
+    !And
+      - !Equals [!Ref LbSubnetA,!Ref TaskSubnetA]
+      - !Equals [!Ref LbSubnetB,!Ref TaskSubnetB]
 Resources:
   Cluster:
     Type: AWS::ECS::Cluster
@@ -113,7 +118,6 @@ Resources:
             Action: 'sts:AssumeRole'
       ManagedPolicyArns:
         - 'arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy'
-        - 'arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess'
 
   # A role for the containers
   TaskRole:
@@ -126,6 +130,8 @@ Resources:
             Principal:
               Service: ecs-tasks.amazonaws.com
             Action: 'sts:AssumeRole'
+      ManagedPolicyArns:
+        - 'arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess'
       # ManagedPolicyArns:
       #   -
       # Policies:
@@ -183,7 +189,7 @@ Resources:
         AwsvpcConfiguration:
           # change to DISABLED if you're using private subnets that have access to a NAT gateway
           # AssignPublicIp: ENABLED
-          AssignPublicIp: DISABLED
+          AssignPublicIp: !If [ContainerPublicIps,ENABLED,DISABLED]
           Subnets:
             - !Ref TaskSubnetA
             - !Ref TaskSubnetB
