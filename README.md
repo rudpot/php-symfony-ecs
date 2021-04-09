@@ -16,6 +16,7 @@ Test php symfony deploy on ECS.
   ```
   docker exec -it e84fcfaa2a0a /bin/bash
   ```
+* there is an endpoint /aws/s3test which will try to list s3 buckets and read the content of a named bucket. Currently that bucket name is hardcoded so will likel fail for you.
 
 ## How we got here
 
