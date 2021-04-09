@@ -21,7 +21,7 @@ Test php symfony deploy on ECS.
 
 * use bitnami docker image - https://hub.docker.com/r/bitnami/symfony/
 * see the _local workspace_ instructions for local testing. Note that docker-compose may not play nice with docker login so the `docker compose up` might fail with a 429. If it does user `docker login` and `docker pull` to get the two included images
-
-
+* add https://github.com/aws/aws-sdk-php-symfony
 ```
+docker exec -it e84fcfaa2a0a composer require aws/aws-sdk-php-symfony
 ```
